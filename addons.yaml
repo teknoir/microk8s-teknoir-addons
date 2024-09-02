@@ -3,7 +3,7 @@ microk8s-addons:
   addons:
     - name: "toe"
       description: "Teknoir Orkestration Engine (TOE)"
-      version: "2.0.1"
+      version: "2.0.2"
       check_status: "deployment.apps/toe"
       supported_architectures:
         - arm64
