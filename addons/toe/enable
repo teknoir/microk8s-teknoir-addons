@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-VERSION_TOE="2.0.1"
+VERSION_TOE="2.0.2"
 NAMESPACE_TOE="teknoir-system"
 VALUES_TOE="/etc/teknoir/values.yaml"
 "$SNAP/microk8s-enable.wrapper" helm3
