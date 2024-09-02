@@ -6,6 +6,5 @@ microk8s-addons:
       version: "2.0.1"
       check_status: "deployment.apps/toe"
       supported_architectures:
-        - arm32
         - arm64
         - amd64
