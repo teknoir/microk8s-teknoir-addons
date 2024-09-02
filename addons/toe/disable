@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -e
+
+NAMESPACE_TOE="teknoir-system"
+
+KUBECTL="$SNAP/microk8s-kubectl.wrapper"
+HELM="$SNAP/microk8s-helm3.wrapper"
+KUBECTL_DELETE_ARGS="--wait=true --timeout=180s --ignore-not-found=true"
+
+PURGE=false
+# get the options
+while getopts ":p" flag; do
+  case "${flag}" in
+          p) PURGE=true
+             ;;
+          *) echo "Usage: microk8s disable argocd [-p]"
+             echo ""
+             echo "WARNING: Final deletion of \"$NAMESPACE_TOE\" namespace must be enforced by: \"microk8s disable toe -p\""
+             echo ""
+             exit 0
+             ;;
+  esac
+done
+
+echo "Disabling TOE in namespace: ${NAMESPACE_TOE}"
+
+$HELM delete toe -n $NAMESPACE_TOE
+
+if $PURGE; then
+    echo "Final \"$NAMESPACE_TOE\" namespace deletion"
+    $KUBECTL delete $KUBECTL_DELETE_ARGS namespace "$NAMESPACE_TOE" > /dev/null 2>&1 || true
+else
+    echo ""
+    echo "WARNING: Final deletion of \"$NAMESPACE_TOE\" namespace must be enforced by: \"microk8s disable argocd -p\""
+    echo ""
+fi
+
+echo "TOE disabled"

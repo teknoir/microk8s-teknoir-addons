@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -e
+
+VERSION_TOE="2.0.1"
+NAMESPACE_TOE="teknoir-system"
+VALUES_TOE="/etc/teknoir/values.yaml"
+"$SNAP/microk8s-enable.wrapper" helm3
+KUBECTL="$SNAP/microk8s-kubectl.wrapper"
+HELM="$SNAP/microk8s-helm3.wrapper"
+
+# get the options
+while getopts ":v:f:h:" flag; do
+  case "${flag}" in
+          v) NAMESPACE_TOE=${OPTARG}
+             ;;
+          f) VALUES_TOE=${OPTARG}
+             ;;
+          *) echo "Usage: microk8s enable toe"
+             echo ""
+             echo "With overwriting default values: microk8s enable toe -f values.yaml"
+             echo ""
+             exit 0
+             ;;
+  esac
+done
+
+echo "Installing TOE in namespace: ${NAMESPACE_TOE} and values: ${VALUES_TOE}"
+
+helm repo add teknoir https://teknoir.github.io/toe-helm
+
+# make sure the namespace exists
+$KUBECTL create namespace "${NAMESPACE_TOE}" > /dev/null 2>&1 || true
+
+# install the helm chart
+$HELM upgrade --install toe teknoir/TOE \
+  --version ${VERSION_TOE} \
+  --namespace ${NAMESPACE_TOE} \
+  -f ${VALUES_TOE}
+
+echo "TOE is installed"
